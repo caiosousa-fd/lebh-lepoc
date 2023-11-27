@@ -1,32 +1,40 @@
-asyncapi: '2.6.0'
+asyncapi: 3.0.0
 info:
   title: Liability Engine Bet Processor POC
-  description: |
-    The Parlay Liability Calculator flow allows you to accumulate repeat bets for a given parlay and raise an alert or even suspend the bet placement for the given parlay.
-  version: '1.0.0'
+  version: 1.0.0
+  description: >
+    The Parlay Liability Calculator flow allows you to accumulate repeat bets
+    for a given parlay and raise an alert or even suspend the bet placement for
+    the given parlay.
   license:
     name: Apache 2.0
     url: 'https://www.apache.org/licenses/LICENSE-2.0'
 servers:
   dev:
-    url: use1-betting-backbone01.dev.fndlsb.net:9092
+    host: 'use1-betting-backbone01.dev.fndlsb.net:9092'
     protocol: Kafka
     description: The aggregated streams for the dev environment
   prd:
-    url: use1-betting-backbone01.prd.fndlsb.net:9092
+    host: 'use1-betting-backbone01.prd.fndlsb.net:9092'
     protocol: Kafka
     description: The aggregated streams for the prd environment
 channels:
   parlay_stream:
-    publish:
-      summary: Publishes commands about the parlay liability.
-      operationId: accountId
-      message:
-        oneOf:
-          - $ref: '#/components/messages/AddParlayLiability'
-          - $ref: '#/components/messages/RemoveParlayLiability'
-
-
+    address: parlay_stream
+    messages:
+      accountId.message.0:
+        $ref: '#/components/messages/AddParlayLiability'
+      accountId.message.1:
+        $ref: '#/components/messages/RemoveParlayLiability'
+operations:
+  accountId:
+    action: receive
+    channel:
+      $ref: '#/channels/parlay_stream'
+    summary: Publishes commands about the parlay liability.
+    messages:
+      - $ref: '#/components/messages/AddParlayLiability'
+      - $ref: '#/components/messages/RemoveParlayLiability'
 components:
   messages:
     AddParlayLiability:
@@ -36,15 +44,13 @@ components:
       contentType: protobuf
       payload:
         $ref: '#/components/schemas/ParlayLiability'
-
     RemoveParlayLiability:
       name: RemoveParlayLiability
       title: Remove parlay liability
       summary: Informs that the parlay liability no longer applies.
       contentType: protobuf
       payload:
-        $ref: '#/components/schemas/CustomerParlayLiability'
-
+        $ref: '#/components/schemas/ParlayLiability'
   schemas:
     ParlayLiability:
       type: object
@@ -53,7 +59,6 @@ components:
           $ref: '#/components/schemas/accountId'
         parlay:
           $ref: '#/components/schemas/parlay'
-
     parlay:
       type: object
       properties:
@@ -78,12 +83,12 @@ components:
           format: double
           exclusiveMinimum: 0
           description: The potential winning of the bet
-
     parlayId:
       type: string
       format: uuid
-      description: It's generated hash that represents a unique Id of all the legs that are part of this bet
-
+      description: >-
+        It's generated hash that represents a unique Id of all the legs that are
+        part of this bet
     legs:
       type: array
       minimum: 2
@@ -97,7 +102,6 @@ components:
           $ref: '#/components/schemas/entity'
         competitionInfo:
           $ref: '#/components/schemas/entity'
-
     entity:
       type: object
       properties:
@@ -108,12 +112,10 @@ components:
           type: integer
           description: entity ramp id
           exclusiveMinimum: 0
-
     accountId:
       type: string
       exclusiveMinimum: 0
       description: The account id of the customer
-
     productIds:
       type: array
       minimum: 1
