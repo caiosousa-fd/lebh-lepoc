@@ -23,8 +23,8 @@ channels:
       operationId: accountId
       message:
         oneOf:
-          - $ref : '#/components/messages/AddParlayLiability'
-          - $ref : '#/components/messages/RemoveParlayLiability'
+          - $ref: '#/components/messages/AddParlayLiability'
+          - $ref: '#/components/messages/RemoveParlayLiability'
 
 
 components:
