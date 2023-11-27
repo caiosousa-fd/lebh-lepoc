@@ -22,12 +22,12 @@ channels:
   parlay_stream:
     address: parlay_stream
     messages:
-      accountId.message.0:
+      parlayId.message.0:
         $ref: '#/components/messages/AddParlayLiability'
-      accountId.message.1:
+      parlayId.message.1:
         $ref: '#/components/messages/RemoveParlayLiability'
 operations:
-  accountId:
+  parlayId:
     action: receive
     channel:
       $ref: '#/channels/parlay_stream'
@@ -55,8 +55,6 @@ components:
     ParlayLiability:
       type: object
       properties:
-        accountId:
-          $ref: '#/components/schemas/accountId'
         parlay:
           $ref: '#/components/schemas/parlay'
     parlay:
@@ -112,10 +110,6 @@ components:
           type: integer
           description: entity ramp id
           exclusiveMinimum: 0
-    accountId:
-      type: string
-      exclusiveMinimum: 0
-      description: The account id of the customer
     productIds:
       type: array
       minimum: 1
