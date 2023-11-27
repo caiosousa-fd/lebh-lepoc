@@ -1,0 +1,124 @@
+asyncapi: '2.6.0'
+info:
+  title: Liability Engine Bet Processor POC
+  description: |
+    The Parlay Liability Calculator flow allows you to accumulate repeat bets for a given parlay and raise an alert or even suspend the bet placement for the given parlay.
+  version: '1.0.0'
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0'
+servers:
+  dev:
+    url: use1-betting-backbone01.dev.fndlsb.net:9092
+    protocol: Kafka
+    description: The aggregated streams for the dev environment
+  prd:
+    url: use1-betting-backbone01.prd.fndlsb.net:9092
+    protocol: Kafka
+    description: The aggregated streams for the prd environment
+channels:
+  parlay_stream:
+    publish:
+      summary: Publish's commands about the customer paraly liability.
+      operationId: accountId
+      message:
+        oneOf:
+          - $ref : '#/components/messages/AddParlayLiability'
+          - $ref : '#/components/messages/RemoveParlayLiability'
+
+
+components:
+  messages:
+    AddCustomerParlayLiability:
+      name: AddCustomerParlayLiability
+      title: Add customer parlay liability
+      summary: Informs to add this parlay liability for this customer.
+      contentType: protobuf
+      payload:
+        $ref: '#/components/schemas/ParlayLiability'
+
+    RemoveCustomerParlayLiability:
+      name: RemoveCustomerParlayLiability
+      title: Remove customer parlay liability
+      summary: Informs that the parlay liability for this customer no longer applies.
+      contentType: protobuf
+      payload:
+        $ref: '#/components/schemas/CustomerParlayLiability'
+
+  schemas:
+    ParlayLiability:
+      type: object
+      properties:
+        accountId:
+          $ref: '#/components/schemas/accountId'
+        parlay:
+          $ref: '#/components/schemas/parlay'
+
+    parlay:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/parlayId'
+        betId:
+          type: integer
+          exclusiveMinimum: 0
+          description: the bet id
+        productId:
+          type: integer
+          exclusiveMinimum: 0
+          description: the betting-state in which the bet was made.
+        placeDate:
+          type: integer
+          format: datetime
+          description: the date/time when the bet was placed
+        legs:
+          $ref: '#/components/schemas/legs'
+        potentialWinning:
+          type: number
+          format: double
+          exclusiveMinimum: 0
+          description: The potential winning of the bet
+
+    parlayId:
+      type: string
+      format: uuid
+      description: It's generated hash that represents a unique Id of all the legs that are part of this bet
+
+    legs:
+      type: array
+      minimum: 2
+      maximum: 25
+      properties:
+        selectionInfo:
+          $ref: '#/components/schemas/entity'
+        marketInfo:
+          $ref: '#/components/schemas/entity'
+        sportInfo:
+          $ref: '#/components/schemas/entity'
+        competitionInfo:
+          $ref: '#/components/schemas/entity'
+
+    entity:
+      type: object
+      properties:
+        name:
+          type: string
+          description: entity name
+        rampId:
+          type: integer
+          description: entity ramp id
+          exclusiveMinimum: 0
+
+    accountId:
+      type: string
+      exclusiveMinimum: 0
+      description: The account id of the customer
+
+    productIds:
+      type: array
+      minimum: 1
+      properties:
+        productId:
+          type: string
+          exclusiveMinimum: 0
+          description: the betting-state in which the stake factor should be updated.
