@@ -19,7 +19,7 @@ servers:
 channels:
   parlay_stream:
     publish:
-      summary: Publish's commands about the customer paraly liability.
+      summary: Publishes commands about the parlay liability.
       operationId: accountId
       message:
         oneOf:
@@ -29,18 +29,18 @@ channels:
 
 components:
   messages:
-    AddCustomerParlayLiability:
-      name: AddCustomerParlayLiability
-      title: Add customer parlay liability
-      summary: Informs to add this parlay liability for this customer.
+    AddParlayLiability:
+      name: AddParlayLiability
+      title: Add parlay liability
+      summary: Informs to add this parlay liability.
       contentType: protobuf
       payload:
         $ref: '#/components/schemas/ParlayLiability'
 
-    RemoveCustomerParlayLiability:
-      name: RemoveCustomerParlayLiability
-      title: Remove customer parlay liability
-      summary: Informs that the parlay liability for this customer no longer applies.
+    RemoveParlayLiability:
+      name: RemoveParlayLiability
+      title: Remove parlay liability
+      summary: Informs that the parlay liability no longer applies.
       contentType: protobuf
       payload:
         $ref: '#/components/schemas/CustomerParlayLiability'
