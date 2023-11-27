@@ -1,4 +1,4 @@
-asyncapi: 3.0.0
+asyncapi: 2.6.0
 info:
   title: Liability Engine Bet Processor POC
   version: 1.0.0
@@ -11,30 +11,22 @@ info:
     url: 'https://www.apache.org/licenses/LICENSE-2.0'
 servers:
   dev:
-    host: 'use1-betting-backbone01.dev.fndlsb.net:9092'
+    url: use1-betting-backbone01.dev.fndlsb.net:9092
     protocol: Kafka
     description: The aggregated streams for the dev environment
   prd:
-    host: 'use1-betting-backbone01.prd.fndlsb.net:9092'
+    url: use1-betting-backbone01.prd.fndlsb.net:9092
     protocol: Kafka
     description: The aggregated streams for the prd environment
 channels:
   parlay_stream:
-    address: parlay_stream
-    messages:
-      parlayId.message.0:
-        $ref: '#/components/messages/AddParlayLiability'
-      parlayId.message.1:
-        $ref: '#/components/messages/RemoveParlayLiability'
-operations:
-  parlayId:
-    action: receive
-    channel:
-      $ref: '#/channels/parlay_stream'
-    summary: Publishes commands about the parlay liability.
-    messages:
-      - $ref: '#/components/messages/AddParlayLiability'
-      - $ref: '#/components/messages/RemoveParlayLiability'
+    publish:
+      summary: Publish's commands about the parlay liability.
+      operationId: parlayId
+      message:
+        oneOf:
+          - $ref : '#/components/messages/AddParlayLiability'
+          - $ref : '#/components/messages/RemoveParlayLiability'
 components:
   messages:
     AddParlayLiability:
