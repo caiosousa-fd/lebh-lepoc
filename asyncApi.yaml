@@ -62,10 +62,6 @@ components:
           type: integer
           exclusiveMinimum: 0
           description: the betting-state in which the bet was made.
-        placeDate:
-          type: integer
-          format: datetime
-          description: the date/time when the bet was placed
         legs:
           $ref: '#/components/schemas/legs'
         potentialWinning:
